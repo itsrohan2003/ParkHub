@@ -5,7 +5,7 @@
   </head>
   <body></body>
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", async function () {
       const formData = sessionStorage.getItem("formData");
       const selectedValue = sessionStorage.getItem("selectedValue");
 
@@ -20,6 +20,29 @@
         console.log("Name:", data.name);
         console.log("Contact:", data.contact);
         console.log("Vehicle:", data.vehicle);
+
+        // Prepare the data to be sent to the server
+        const postData = {
+          areaID: selectedValue,
+          name: data.name,
+          contact: data.contact,
+          vehicle: data.vehicle
+        };
+
+        // Send the data to the server
+        const response = await fetch('/insert', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(postData)
+        });
+
+        if (response.ok) {
+          console.log('Data sent and inserted successfully');
+        } else {
+          console.error('Error sending data:', response.statusText);
+        }
       } else {
         console.error("Form data not found.");
       }

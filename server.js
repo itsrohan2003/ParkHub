@@ -1,21 +1,85 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const mysql = require('mysql2');
 
-const server = http.createServer((req, res) => {
-  const reqPath = req.url === '/' ? '/welcome.html' : req.url;
-  const filePath = path.join(__dirname, reqPath);
-  const contentType = getContentType(filePath);
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: '245678@#Rohan',
+  database: 'ParkHub'
+});
 
-  fs.readFile(filePath, 'utf-8', (err, content) => {
-    if (err) {
-      res.writeHead(500);
-      res.end('Error loading the file');
-    } else {
-      res.writeHead(200, { 'Content-Type': contentType });
-      res.end(content);
-    }
-  });
+connection.connect((err) => {
+  if (err) {
+    console.error('Error connecting to the database:', err);
+  } else {
+    console.log('Connected to the database');
+  }
+});
+
+const server = http.createServer(async (req, res) => {
+  if (req.method === 'POST' && req.url === '/insert') {
+    let data = '';
+    req.on('data', (chunk) => {
+      data += chunk;
+    });
+
+    req.on('end', () => {
+      try {
+        const jsonData = JSON.parse(data);
+        const { areaID, name, contact, vehicle } = jsonData;
+
+        const sqlUpdate = `
+        UPDATE ParkingSpots
+        SET availability = 1,
+            name = ?,
+            vehicleNumber = ?,
+            contactNumber = ?
+        WHERE spotID = (
+            SELECT spotID
+            FROM (
+                SELECT spotID
+                FROM ParkingSpots
+                WHERE availability = 0 AND areaID = ? -- Change this to the chosen areaID
+                ORDER BY spotID ASC
+                LIMIT 1
+            ) AS subquery
+        )`;
+        
+
+        connection.query(sqlUpdate, [name, vehicle, contact, areaID], (err, updateResult) => {
+          if (err) {
+            console.error('Error updating data:', err);
+            res.writeHead(500);
+            res.end('Error updating data');
+          } else {
+            console.log('Data updated successfully');
+            res.writeHead(200);
+            res.end('Data updated successfully');
+          }
+        });
+      } catch (err) {
+        console.error('Error parsing JSON:', err);
+        res.writeHead(400);
+        res.end('Invalid JSON data');
+      }
+    });
+  } else {
+    const reqPath = req.url === '/' ? '/welcome.html' : req.url;
+    const filePath = path.join(__dirname, reqPath);
+    const contentType = getContentType(filePath);
+
+    fs.readFile(filePath, 'utf-8', (err, content) => {
+      if (err) {
+        res.writeHead(500);
+        res.end('Error loading the file');
+      } else {
+        res.writeHead(200, { 'Content-Type': contentType });
+        res.end(content);
+      }
+    });
+  }
 });
 
 const PORT = 3000;
