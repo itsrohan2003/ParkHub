@@ -7,7 +7,8 @@
 <body>
     <h1>Welcome to ParkHub</h1>
     
-    <form action="block.html" method="POST">
+    <form id="dataForm" action="http://localhost:3000/map" method="POST">
+        <!-- Form inputs -->
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required><br><br>
         
@@ -17,9 +18,25 @@
         <label for="vehicle">Vehicle Number:</label>
         <input type="text" id="vehicle" name="vehicle" required><br><br>
         
+        <!-- Submit button -->
         <input type="submit" value="Submit">
     </form>
     
     <footer>Developed by BagruProxies</footer>
+
+    <script>
+
+    document.getElementById('dataForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent form submission
+        
+        const formData = new FormData(event.target);
+        
+        // Store form data in session storage for retrieval on map.html
+        sessionStorage.setItem('formData', JSON.stringify(Object.fromEntries(formData)));
+        
+        // Redirect to block.html or wherever the next step is
+        window.location.href = 'block.html';
+    });
+    </script>
 </body>
 </html>

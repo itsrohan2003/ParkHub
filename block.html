@@ -6,15 +6,28 @@
 </head>
 <body>
     <h1>Select your area</h1>
-    <form action="map.html" method="POST">
+    <form id="areaForm" method="POST"> <!-- No action attribute, as we'll use JavaScript to handle the submission -->
         <label for="dropdown">Choose an option:</label>
-        <select id="dropdown" name="dropdown">
-            <option value="AB1">Block1</option>
-            <option value="AB2">Block2</option>
-            <option value="AB2">Block3</option>
+        <select id="dropdown" name="areaID">
+            <option value="001">AB1 Parking</option>
+            <option value="002">Main Gate Parking</option>
         </select><br><br>
         
         <input type="submit" value="Submit">
     </form>
+
+    <script>
+        document.getElementById('areaForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            const selectedValue = document.getElementById('dropdown').value;
+
+            // Store selected value in session storage for retrieval on map.html
+            sessionStorage.setItem('selectedValue', selectedValue);
+
+            // Redirect to map.html
+            window.location.href = 'map.html';
+        });
+    </script>
 </body>
 </html>

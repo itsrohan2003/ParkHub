@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Parking Spot Map</title>
+  </head>
+  <body></body>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const formData = sessionStorage.getItem("formData");
+      const selectedValue = sessionStorage.getItem("selectedValue");
+
+      if (selectedValue) {
+        console.log("AreaID: ", selectedValue);
+      } else {
+        console.error("Selected value not found.");
+      }
+
+      if (formData) {
+        const data = JSON.parse(formData);
+        console.log("Name:", data.name);
+        console.log("Contact:", data.contact);
+        console.log("Vehicle:", data.vehicle);
+      } else {
+        console.error("Form data not found.");
+      }
+    });
+  </script>
+</html>
