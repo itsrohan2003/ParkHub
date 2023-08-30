@@ -2,57 +2,83 @@
 <html>
   <head>
     <title>Parking Spot Map</title>
+    <style>
+      /* Add your CSS styles here */
+      .layout {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .parking-spot {
+        width: 50px;
+        height: 50px;
+        margin: 5px;
+        border: 1px solid black;
+      }
+    </style>
   </head>
-  <body></body>
-  <script>
-    document.addEventListener("DOMContentLoaded", async function () {
-      const formData = sessionStorage.getItem("formData");
-      const selectedValue = sessionStorage.getItem("selectedValue");
+  <body>
+    <div class="layout"></div>
+    <script>
+      document.addEventListener("DOMContentLoaded", async function () {
+        const formData = sessionStorage.getItem("formData");
+        const selectedValue = sessionStorage.getItem("selectedValue");
 
-      if (selectedValue) {
-        console.log("AreaID: ", selectedValue);
-      } else {
-        console.error("Selected value not found.");
-      }
-
-      if (formData) {
-        const data = JSON.parse(formData);
-        console.log("Name:", data.name);
-        console.log("Contact:", data.contact);
-        console.log("Vehicle:", data.vehicle);
-
-        // Prepare the data to be sent to the server
-        const postData = {
-          areaID: selectedValue,
-          name: data.name,
-          contact: data.contact,
-          vehicle: data.vehicle
-        };
-
-        // Send the data to the server
-        const response = await fetch('/insert', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(postData)
-        });
-
-        if (response.ok) {
-          console.log('Data sent and inserted successfully');
-          
-          // Receive the JSON data from the server
-          const responseData = await response.json();
-          console.log('Queried Parking Spots:', responseData);
-          
-          // Process the queried data as needed
-          // For example, update the map with the parking spots
+        if (selectedValue) {
+          console.log("AreaID: ", selectedValue);
         } else {
-          console.error('Error sending data:', response.statusText);
+          console.error("Selected value not found.");
         }
-      } else {
-        console.error("Form data not found.");
-      }
-    });
-  </script>
+
+        if (formData) {
+          const data = JSON.parse(formData);
+          console.log("Name:", data.name);
+          console.log("Contact:", data.contact);
+          console.log("Vehicle:", data.vehicle);
+
+          // Prepare the data to be sent to the server
+          const postData = {
+            areaID: selectedValue,
+            name: data.name,
+            contact: data.contact,
+            vehicle: data.vehicle,
+          };
+
+          // Send the data to the server
+          const response = await fetch("/insert", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(postData),
+          });
+
+          if (response.ok) {
+            console.log("Data sent and inserted successfully");
+
+            // Receive the JSON data from the server
+            const responseData = await response.json();
+            console.log("Queried Parking Spots:", responseData);
+
+            // Process the queried data by creating parking spot blocks
+            const layoutContainer = document.querySelector(".layout");
+            responseData.forEach((parkingSpot) => {
+              const parkingSpotBlock = document.createElement("div");
+              parkingSpotBlock.className = "parking-spot";
+              parkingSpotBlock.textContent = parkingSpotBlock.textContent = `
+              ID: ${parkingSpot.spotID}
+              Name: ${data.name}
+              Contact: ${data.contact}
+              Vehicle: ${data.vehicle}
+  `; // You can customize this as needed
+              layoutContainer.appendChild(parkingSpotBlock);
+            });
+          } else {
+            console.error("Error sending data:", response.statusText);
+          }
+        } else {
+          console.error("Form data not found.");
+        }
+      });
+    </script>
+  </body>
 </html>
