@@ -40,6 +40,13 @@
 
         if (response.ok) {
           console.log('Data sent and inserted successfully');
+          
+          // Receive the JSON data from the server
+          const responseData = await response.json();
+          console.log('Queried Parking Spots:', responseData);
+          
+          // Process the queried data as needed
+          // For example, update the map with the parking spots
         } else {
           console.error('Error sending data:', response.statusText);
         }

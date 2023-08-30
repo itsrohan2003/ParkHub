@@ -31,22 +31,21 @@ const server = http.createServer(async (req, res) => {
         const { areaID, name, contact, vehicle } = jsonData;
 
         const sqlUpdate = `
-        UPDATE ParkingSpots
-        SET availability = 1,
-            name = ?,
-            vehicleNumber = ?,
-            contactNumber = ?
-        WHERE spotID = (
-            SELECT spotID
-            FROM (
-                SELECT spotID
-                FROM ParkingSpots
-                WHERE availability = 0 AND areaID = ? -- Change this to the chosen areaID
-                ORDER BY spotID ASC
-                LIMIT 1
-            ) AS subquery
-        )`;
-        
+          UPDATE ParkingSpots
+          SET availability = 1,
+              name = ?,
+              vehicleNumber = ?,
+              contactNumber = ?
+          WHERE spotID = (
+              SELECT spotID
+              FROM (
+                  SELECT spotID
+                  FROM ParkingSpots
+                  WHERE availability = 0 AND areaID = ? -- Change this to the chosen areaID
+                  ORDER BY spotID ASC
+                  LIMIT 1
+              ) AS subquery
+          )`;
 
         connection.query(sqlUpdate, [name, vehicle, contact, areaID], (err, updateResult) => {
           if (err) {
@@ -55,8 +54,26 @@ const server = http.createServer(async (req, res) => {
             res.end('Error updating data');
           } else {
             console.log('Data updated successfully');
-            res.writeHead(200);
-            res.end('Data updated successfully');
+
+            const sqlSelect = `
+              SELECT *
+              FROM ParkingSpots where
+              areaID = ?
+              ORDER BY spotID ASC`;
+
+              connection.query(sqlSelect, [areaID], (err, selectResult) => {
+                if (err) {
+                  console.error('Error querying data:', err);
+                  res.writeHead(500);
+                  res.end('Error querying data');
+                } else {
+                  const queriedParkingSpots = selectResult;
+              
+                  // Send the queriedParkingSpots to the client as JSON
+                  res.writeHead(200, { 'Content-Type': 'application/json' });
+                  res.end(JSON.stringify(queriedParkingSpots));
+                }
+              });
           }
         });
       } catch (err) {
