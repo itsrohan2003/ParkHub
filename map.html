@@ -7,33 +7,30 @@
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     />
     <style>
-        /* Your custom styles */
-        .layout {
-          display: grid;
-          grid-template-columns: repeat(5, 1fr);
-          gap: 10px;
-        }
-        .parking-spot {
-          border: 2px solid #aaa;
-          background-color: #f0f0f0;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          padding: 5px;
-          font-size: 12px;
-          text-align: center;
-          min-height: 60px;
-        }
-      </style>
+      /* Your custom styles */
+      .layout {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+      }
+      .parking-spot {
+        border: 2px solid #aaa;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 5px;
+        font-size: 12px;
+        text-align: center;
+        min-height: 60px;
+      }
+    </style>
   </head>
   <body>
-
-  <div class="container mt-5">
-    <div class="row layout"></div>
-  </div>
- </body>
- <script>
+    <div class="container mt-5">
+      <div class="row layout"></div>
+    </div>
+    <script>
       document.addEventListener("DOMContentLoaded", async function () {
         const formData = sessionStorage.getItem("formData");
         const selectedValue = sessionStorage.getItem("selectedValue");
@@ -50,7 +47,6 @@
           console.log("Contact:", data.contact);
           console.log("Vehicle:", data.vehicle);
 
-          // Prepare the data to be sent to the server
           const postData = {
             areaID: selectedValue,
             name: data.name,
@@ -58,7 +54,6 @@
             vehicle: data.vehicle,
           };
 
-          // Send the data to the server
           const response = await fetch("/insert", {
             method: "POST",
             headers: {
@@ -70,21 +65,27 @@
           if (response.ok) {
             console.log("Data sent and inserted successfully");
 
-            // Receive the JSON data from the server
             const responseData = await response.json();
             console.log("Queried Parking Spots:", responseData);
 
-            // Process the queried data by creating parking spot blocks
             const layoutContainer = document.querySelector(".layout");
             responseData.forEach((parkingSpot) => {
               const parkingSpotBlock = document.createElement("div");
               parkingSpotBlock.className = "parking-spot";
-              parkingSpotBlock.textContent = parkingSpotBlock.textContent = `
-              ID: ${parkingSpot.spotID}
-    Name: ${parkingSpot.name}
-    Contact: ${parkingSpot.contactNumber}
-    Vehicle: ${parkingSpot.vehicleNumber}
-  `; // You can customize this as needed
+
+              if (parkingSpot.availability === 0) {
+                parkingSpotBlock.style.backgroundColor = "lightgreen";
+              } else if (parkingSpot.availability === 1) {
+                parkingSpotBlock.style.backgroundColor = "lightcoral";
+              }
+
+              parkingSpotBlock.innerHTML = `
+                ID: ${parkingSpot.spotID}
+                Name: ${parkingSpot.name}
+                Contact: ${parkingSpot.contactNumber}
+                Vehicle: ${parkingSpot.vehicleNumber}
+              `;
+
               layoutContainer.appendChild(parkingSpotBlock);
             });
           } else {
