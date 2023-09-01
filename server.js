@@ -99,7 +99,7 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-const PORT = 3000;
+const PORT = 5000;
 
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
