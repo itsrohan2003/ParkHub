@@ -29,6 +29,7 @@ const server = http.createServer(async (req, res) => {
       try {
         const jsonData = JSON.parse(data);
         const { areaID, name, contact, vehicle } = jsonData;
+        
 
         const sqlUpdate = `
           UPDATE ParkingSpots
@@ -82,7 +83,40 @@ const server = http.createServer(async (req, res) => {
         res.end('Invalid JSON data');
       }
     });
-  } else {
+  }
+  else if (req.url === '/save-geojson') {
+    // Handle /save-geojson endpoint
+    let data = '';
+
+    req.on('data', (chunk) => {
+      data += chunk;
+    });
+
+    req.on('end', () => {
+      try {
+        const geojsonData = JSON.parse(data);
+        console.log('Received GeoJSON data:', geojsonData);
+  
+        // Access the coordinates of the polygon
+        const coordinates = geojsonData.geometry.coordinates;
+  
+        // Print the coordinates to the console
+        console.log('Polygon Coordinates:', coordinates);
+  
+        // Here, you can process or store the received GeoJSON data as needed.
+        // For example, you could save it to a file, a database, or perform other actions.
+  
+        // Respond with a success message
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end('GeoJSON data received and processed successfully');
+      } catch (err) {
+        console.error('Error parsing GeoJSON:', err);
+        res.writeHead(400, { 'Content-Type': 'text/plain' });
+        res.end('Invalid GeoJSON data');
+      }
+    });
+  }
+  else {
     const reqPath = req.url === '/' ? '/welcome.html' : req.url;
     const filePath = path.join(__dirname, reqPath);
     const contentType = getContentType(filePath);
