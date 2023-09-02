@@ -96,16 +96,15 @@ const server = http.createServer(async (req, res) => {
       try {
         const geojsonData = JSON.parse(data);
         console.log('Received GeoJSON data:', geojsonData);
-  
-        // Access the coordinates of the polygon
-        const coordinates = geojsonData.geometry.coordinates;
-  
+    
+        const polygonCoordinates = geojsonData.polygonCoordinates; // Extract the polygon coordinates
+    
         // Print the coordinates to the console
-        console.log('Polygon Coordinates:', coordinates);
-  
+        console.log('Polygon Coordinates:', polygonCoordinates);
+    
         // Here, you can process or store the received GeoJSON data as needed.
         // For example, you could save it to a file, a database, or perform other actions.
-  
+    
         // Respond with a success message
         res.writeHead(200, { 'Content-Type': 'text/plain' });
         res.end('GeoJSON data received and processed successfully');

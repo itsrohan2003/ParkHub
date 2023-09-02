@@ -2,7 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
     <title>Admin Map</title>
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
     <link
@@ -24,70 +27,80 @@
         height: 90%; /* Adjust the height to leave space for the button */
       }
 
+      /* Style for the button container */
       .button-container {
         position: absolute;
-        bottom: 0;
+        bottom: 10px;
         left: 50%;
         transform: translateX(-50%);
         background-color: #fff;
         padding: 10px;
-        border-top: 1px solid #ddd;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+
+      /* Style for the button */
+      .button {
+        background-color: #0074d9;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 5px;
       }
     </style>
   </head>
   <body>
     <!-- Create a container for the map -->
     <div id="map"></div>
-    <button class="button">Send Polygon</button>
+    <!-- Create a container for the button -->
+    <div class="button-container">
+      <button class="button">Send Polygon</button>
+    </div>
 
     <script>
-              // Initialize the map with your Mapbox access token
-              mapboxgl.accessToken = 'pk.eyJ1Ijoicm9oYW5yb2NrcyIsImEiOiJjbG0wd2U2YzMwOGF5M3FwOXJidjduZ2FjIn0.A84rb5luMKeLyLP0iLmWgQ';
+      // Initialize the map with your Mapbox access token
+      mapboxgl.accessToken =
+        'pk.eyJ1Ijoicm9oYW5yb2NrcyIsImEiOiJjbG0wd2U2YzMwOGF5M3FwOXJidjduZ2FjIn0.A84rb5luMKeLyLP0iLmWgQ';
 
-              var map = new mapboxgl.Map({
-                  container: 'map', // Specify the container ID
-                  style: 'mapbox://styles/mapbox/streets-v11', // You can choose a different map style
-                  center: [77.9668, 30.4159], // Set the initial center coordinates (longitude, latitude)
-                  zoom: 13 // Set the initial zoom level
-              });
+      var map = new mapboxgl.Map({
+        container: 'map', // Specify the container ID
+        style: 'mapbox://styles/mapbox/streets-v11', // You can choose a different map style
+        center: [77.9668, 30.4159], // Set the initial center coordinates (longitude, latitude)
+        zoom: 13, // Set the initial zoom level
+      });
 
-              // Initialize the Draw control
-              var draw = new MapboxDraw({
-                  displayControlsDefault: false,
-                  controls: {
-                      polygon: true,
-                      trash: true,
-                  },
-              });
+      // Initialize the Draw control
+      var draw = new MapboxDraw({
+        displayControlsDefault: false,
+        controls: {
+          polygon: true,
+          trash: true,
+        },
+      });
 
-              map.addControl(draw);
+      map.addControl(draw);
 
-               // Listen for when a polygon is drawn
-               map.on('draw.create', async function (e) { 
-  var geojson = e.features[0].geometry;
-  console.log('Drawn GeoJSON:', geojson);
+      // Initialize an array to store polygon coordinates
+      var polygonCoordinates = [];
 
-  // Send the drawn GeoJSON to the server using a POST request
-  var polygonCoordinates = [];
+      // Listen for when a polygon is drawn
+      map.on('draw.create', function (e) {
+        var geojson = e.features[0].geometry;
+        console.log('Drawn GeoJSON:', geojson);
+        polygonCoordinates = geojson.coordinates[0];
+      });
 
-  // When the user presses the Enter key, add the coordinates of the clicked point to the polygonCoordinates array.
-  map.on('keydown', function (e) {
-    if (e.keyCode === 13) { // 13 is the code for the Enter key
-      polygonCoordinates.push([e.lngLat.lng, e.lngLat.lat]);
-    }
-  });
-});
-
-      // When the user finishes drawing the polygon, send the coordinates of the polygon to the server.js file using an Ajax request.
-      document.querySelector(".button").addEventListener("click", function () {
+      // When the user clicks the button, send the coordinates of the polygon to the server.js file using an Ajax request.
+      document.querySelector('.button').addEventListener('click', function () {
         const postData = {
           polygonCoordinates: polygonCoordinates,
         };
 
-        fetch("/save-geojson", {
-          method: "POST",
+        fetch('/save-geojson', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(postData),
         });
