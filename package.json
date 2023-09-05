@@ -1,6 +1,8 @@
 {
   "dependencies": {
+    "@turf/turf": "^6.5.0",
     "mysql": "^2.18.1",
-    "mysql2": "^3.6.0"
+    "mysql2": "^3.6.0",
+    "turf": "^3.0.14"
   }
 }

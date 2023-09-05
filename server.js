@@ -2,6 +2,8 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const mysql = require('mysql2');
+const turf = require('@turf/turf');
+
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -96,15 +98,31 @@ const server = http.createServer(async (req, res) => {
       try {
         const geojsonData = JSON.parse(data);
         console.log('Received GeoJSON data:', geojsonData);
-    
+
         const polygonCoordinates = geojsonData.polygonCoordinates; // Extract the polygon coordinates
-    
+
         // Print the coordinates to the console
         console.log('Polygon Coordinates:', polygonCoordinates);
-    
-        // Here, you can process or store the received GeoJSON data as needed.
-        // For example, you could save it to a file, a database, or perform other actions.
-    
+
+        // Define the user's coordinates you want to check
+        const userCoordinates = [30.3253, 78.0413];
+
+        // Define the user's location as a point (longitude and latitude) using Turf.js
+        const userLocation = turf.point(userCoordinates);
+
+        // Define the geofence polygon using Turf.js
+        const geofencePolygon = turf.polygon([polygonCoordinates]);
+
+        // Check if the user's location is inside the geofence
+        const isInside = turf.booleanPointInPolygon(userLocation, geofencePolygon);
+
+        if (isInside) {
+          console.log('User is inside the geofenced area.');
+          // You can trigger actions or notifications here.
+        } else {
+          console.log('User is outside the geofenced area.');
+        }
+
         // Respond with a success message
         res.writeHead(200, { 'Content-Type': 'text/plain' });
         res.end('GeoJSON data received and processed successfully');
@@ -114,8 +132,7 @@ const server = http.createServer(async (req, res) => {
         res.end('Invalid GeoJSON data');
       }
     });
-  }
-  else {
+  } else {
     const reqPath = req.url === '/' ? '/welcome.html' : req.url;
     const filePath = path.join(__dirname, reqPath);
     const contentType = getContentType(filePath);
