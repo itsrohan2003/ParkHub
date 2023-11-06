@@ -105,7 +105,7 @@ const server = http.createServer(async (req, res) => {
         console.log('Polygon Coordinates:', polygonCoordinates);
 
         // Define the user's coordinates you want to check
-        const userCoordinates = [30.3253, 78.0413];
+        const userCoordinates = [78.0413,30.3253];
 
         // Define the user's location as a point (longitude and latitude) using Turf.js
         const userLocation = turf.point(userCoordinates);

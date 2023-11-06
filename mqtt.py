@@ -2,7 +2,7 @@ import paho.mqtt.client as mqtt
 
 MQTT_BROKER_HOST = "mqtt-dashboard.com"
 MQTT_BROKER_PORT = 1883  # Use the Websocket port, which is typically 8000
-TOPIC = "public/hivemqtt/testtopic/1"  # Replace with the actual topic you want to subscribe to
+TOPIC = "public/hivemqtt/testtopic/#"  # Replace with the actual topic you want to subscribe to
 CLIENT_ID = "clientId-wehrirxS8q"  # Your client ID
 
 client = mqtt.Client(client_id=CLIENT_ID)  # Set the client ID

@@ -47,7 +47,7 @@
       var map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v11', // You can choose a different map style
-        center: [77.9668, 30.4159], // Set the initial center coordinates (longitude, latitude)
+        center: [26.8439,75.5652], // Set the initial center coordinates (longitude, latitude)
         zoom: 13, // Set the initial zoom level
       });
       document.addEventListener("DOMContentLoaded", async function () {
@@ -114,7 +114,7 @@
           console.error("Form data not found.");
         }
         new mapboxgl.Marker()
-          .setLngLat([30.4159, 77.9668]) // Marker coordinates (longitude, latitude)
+          .setLngLat([26.8439,75.5652]) // Marker coordinates (longitude, latitude)
           .addTo(map); // Add the marker to the map
       });
     </script>
