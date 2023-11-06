@@ -1,1 +1,2 @@
-this is readme
+This project is associated with 'UHackathon-4.0' organized by School Of Computer Science UPES, Dehradun.
+To automate the parking allocation for the university, it uses Geofencing, ultrasonic sensors and MQTT wireless protocol. we integrated our IoT network, a free maps service api to our website server to provide a feasible and cost effective solution to address the problem.
